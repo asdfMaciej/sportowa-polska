@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pl-PL">
+
+<head>
+    <title>SPORTOWA POLSKA</title>
+    <meta charset="UTF-8">
+    <script src="
+https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js
+"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Results</h1>
+
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    {{results_json}}
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Athlete</th>
+            <th>Distance</th>
+            <th>Elevation Gain</th>
+            <th>Moving Time</th>
+            <th>Number of Activities</th>
+        </tr>
+        {% for result in results %}
+        <tr>
+            <td>{{ result.rank }}</td>
+            <td>{{ result.athlete_firstname }} {{ result.athlete_lastname }}</td>
+            <td>{{ result.distance }}</td>
+            <td>{{ result.elev_gain }}</td>
+            <td>{{ result.moving_time }}</td>
+            <td>{{ result.num_activities }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        const results = {{ results_json }};
+        const cfg = {
+            type: 'bar',
+            data: {
+                labels: results.map(result => result.athlete_firstname + ' ' + result.athlete_lastname),
+                datasets: [{
+                    label: 'Moving Time',
+                    data: results,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Athlete'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Moving Time'
+                        }
+                    }
+                },
+                parsing: {
+                    xAxisKey: 'athlete_id',
+                    yAxisKey: 'moving_time'
+                }
+            }
+        };
+
+        const ctx = document.getElementById('myChart');
+        const myChart = new Chart(ctx, cfg);
+    </script>
+</body>
+
+</html>
